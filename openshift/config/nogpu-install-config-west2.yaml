@@ -1,0 +1,53 @@
+apiVersion: v1
+baseDomain: BASEDOMAIN
+compute:
+  - architecture: amd64
+    hyperthreading: Enabled
+    name: worker
+    platform:
+      aws:
+        zones:
+          - us-west-2a
+          - us-west-2b
+          - us-west-2c
+        rootVolume:
+          iops: 2000
+          size: 500
+          type: io1
+        type: m5.4xlarge
+    replicas: 2
+controlPlane:
+  architecture: amd64
+  hyperthreading: Enabled
+  name: master
+  platform:
+    aws:
+      zones:
+        - us-west-2a
+        - us-west-2b
+        - us-west-2c
+      rootVolume:
+        iops: 4000
+        size: 500
+        type: io1
+      type: m5.4xlarge
+  replicas: 2
+metadata:
+  creationTimestamp: null
+  name: CLUSTERNAME
+networking:
+  clusterNetwork:
+    - cidr: 10.128.0.0/14
+      hostPrefix: 23
+  machineNetwork:
+    - cidr: 10.0.0.0/16
+  networkType: OVNKubernetes
+  serviceNetwork:
+    - 172.30.0.0/16
+platform:
+  aws:
+    region: us-west-2
+publish: External
+pullSecret: '{"auths":{"cloud.openshift.com":{"auth":"b3BlbnNoaWZ0LXJlbGVhc2UtZGV2K29jbV9hY2Nlc3NfOTA4YmIxOTMwOTYzNGE3M2I1NGMzNTMzNjdmNGYyNzQ6RkE0QTAxNTA2WDdFV1UzNVgyWUo1T05IRVRPN1JMMFQzQThHUzBMQTJEM1E4NzY5VkFFVFM2UlpTRFRFSkFRRg==","email":"hshishir@redhat.com"},"quay.io":{"auth":"b3BlbnNoaWZ0LXJlbGVhc2UtZGV2K29jbV9hY2Nlc3NfOTA4YmIxOTMwOTYzNGE3M2I1NGMzNTMzNjdmNGYyNzQ6RkE0QTAxNTA2WDdFV1UzNVgyWUo1T05IRVRPN1JMMFQzQThHUzBMQTJEM1E4NzY5VkFFVFM2UlpTRFRFSkFRRg==","email":"hshishir@redhat.com"},"registry.connect.redhat.com":{"auth":"fHVoYy1wb29sLTdjNjdkMzM1LTBlYWItNDkwNC1hNzE4LTMzODgxYjg3Y2E5YzpleUpoYkdjaU9pSlNVelV4TWlKOS5leUp6ZFdJaU9pSTJaVGRrWWpRd1pXRm1ZMkkwTlRjeVlXRm1PR1psWW1Wa04yRXpOV1U0TmlKOS53NDBqX0JqWWRCN1RqcXNrNHplZ2N4Z28xWUdWWlFwdGhkSGVBOU11RTFHWjduaGx6d25sUDE5ZmZtNEtUZDF3TmxrS2piZVE1aGtrMGVsWll0SnVlUlpfNDFQYzJjV255QUNSeC1fMUNjaTRJTmJLeHQybUVvVUNkVm5fMHhMZE1PUlNiVHVab1pBLWw4MTVDVFJ4RzhpLUhuY3B3ZTFoWUxKMXMyNEQwMG1YNDhxWFo0Z0N2SkFrNUtrYk81dWVOSTd0YkVTeVNnWmdTb3dQeVVRajVCcU94M01EQXprWlBrYXgycW5keVY4Ym9VMW9Uakh6TFBSUUFTekJfNm1vTlVrMGVSTHpPb1Frc3VKdTJZRW81LVJYRkFqTmpaVUNFMWtzSDB3R0JZX3hEV1NfYTIzSm8zakxpd0huZFlFbkdibGFRbG9EZk83bmtpcElXY0I0a3N4QXRUOHM3OWlqem5jdVJ1ZHRSOXptX29wUU9IQjh0YnhMSE5UTDA0Rk9IR0hLRW5hd0RELUZEajZ6YUVWMjA5WGZWUlFqRjMwRXQ2bldPNzVjcXo0dnpGeEo2bDBROXhOUXQ4VXNOQzdneUtCaWRiWFBHTjlPaEVXT05uczl0cHgwMG55bUxQcmFwbnI0TVNKMFhOazNIYzU2VlZ1LWhmeTYwTEUzbzBjODNmNXNJYUtEUFVSSl9PczY0ejdQcmw4QlFicHVqSXVIbkstTnRkSmhxUnJUNHk5VDNKSXh3eHpXUE51clE4SE1Zc2dqWFIxQXBCRXpYUk9GYlh4MFB1T29wT1AtTEl4NUo5Y3pYOG9vNC1yS3lqSE0wUDZobE83Z203cVl5WWpkOVhFME56VFZCY2NPNDRyaUxvYVFBZ0QyVlNqM29Fdkw3NmxOYk5YSXlZTQ==","email":"hshishir@redhat.com"},"registry.redhat.io":{"auth":"fHVoYy1wb29sLTdjNjdkMzM1LTBlYWItNDkwNC1hNzE4LTMzODgxYjg3Y2E5YzpleUpoYkdjaU9pSlNVelV4TWlKOS5leUp6ZFdJaU9pSTJaVGRrWWpRd1pXRm1ZMkkwTlRjeVlXRm1PR1psWW1Wa04yRXpOV1U0TmlKOS53NDBqX0JqWWRCN1RqcXNrNHplZ2N4Z28xWUdWWlFwdGhkSGVBOU11RTFHWjduaGx6d25sUDE5ZmZtNEtUZDF3TmxrS2piZVE1aGtrMGVsWll0SnVlUlpfNDFQYzJjV255QUNSeC1fMUNjaTRJTmJLeHQybUVvVUNkVm5fMHhMZE1PUlNiVHVab1pBLWw4MTVDVFJ4RzhpLUhuY3B3ZTFoWUxKMXMyNEQwMG1YNDhxWFo0Z0N2SkFrNUtrYk81dWVOSTd0YkVTeVNnWmdTb3dQeVVRajVCcU94M01EQXprWlBrYXgycW5keVY4Ym9VMW9Uakh6TFBSUUFTekJfNm1vTlVrMGVSTHpPb1Frc3VKdTJZRW81LVJYRkFqTmpaVUNFMWtzSDB3R0JZX3hEV1NfYTIzSm8zakxpd0huZFlFbkdibGFRbG9EZk83bmtpcElXY0I0a3N4QXRUOHM3OWlqem5jdVJ1ZHRSOXptX29wUU9IQjh0YnhMSE5UTDA0Rk9IR0hLRW5hd0RELUZEajZ6YUVWMjA5WGZWUlFqRjMwRXQ2bldPNzVjcXo0dnpGeEo2bDBROXhOUXQ4VXNOQzdneUtCaWRiWFBHTjlPaEVXT05uczl0cHgwMG55bUxQcmFwbnI0TVNKMFhOazNIYzU2VlZ1LWhmeTYwTEUzbzBjODNmNXNJYUtEUFVSSl9PczY0ejdQcmw4QlFicHVqSXVIbkstTnRkSmhxUnJUNHk5VDNKSXh3eHpXUE51clE4SE1Zc2dqWFIxQXBCRXpYUk9GYlh4MFB1T29wT1AtTEl4NUo5Y3pYOG9vNC1yS3lqSE0wUDZobE83Z203cVl5WWpkOVhFME56VFZCY2NPNDRyaUxvYVFBZ0QyVlNqM29Fdkw3NmxOYk5YSXlZTQ==","email":"hshishir@redhat.com"}}}'
+sshKey: |
+  ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCmdEA/GcQ6EAHS8vv+AM6q88zRsfi+2o7qtsB01gOmmghK31m+0TC8F9zZ5T5ZNzt0UeHsTsMXowQX3ESRcILFv/jJytHJW1C+ATK8vWOxI8btC6/yAPO5GnejhADKYA2VLq0DfY1YPRyTm3Es2vDIqcaXuuXe9q59nqdh/g0mlIGXWNUlG/5G1qOxkV/bPCQQxPYEmNG6bl3wfCcWYOMJK//0ApZPBzUHruOZ9GQTDZ2a/HU5uoLWGMgG3nXd52PkqTCFddMjC/V6++9XNpXZAo/lJoYBgzWIO2FTEVVBTQr77x29+PMDdrDL/RtHYQsfO7vO0HRV1jyMReymn5VALFbxnxwFBsdL0I6c/qC6Y1exjC3HNtyfiBJSiypIZ+zF4s7xvNdCw1K6ekfieNZDbNGUPk1C4YjTge3ICD8KIO1A6ND/z172ZutQhkxBAEALbl+dMDGJdFaB1sZ3iCLXr50PfdTG0gW8FORHYheqsXA/mJrL3bGwJUcJnrigy5IqkHIwh4ERsLsQ7Gwmwi1X+ZhBLvcUF7N4Zgmde9TX5xR/GgAKIUa7Q/z4+ubVVNeBFTyUj8zS4zFyongjBpkrct+L7LzBNCDBvaHzuMmLze840jthALk+GJ0hSTfl8WAOIaEjaokAyFiLJ5Qa5K5g36A652Jv//Gfjp444q0ptw== hshishir@redhat.com

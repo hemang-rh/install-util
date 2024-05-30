@@ -1,0 +1,53 @@
+apiVersion: v1
+baseDomain: BASEDOMAIN
+compute:
+  - architecture: amd64
+    hyperthreading: Enabled
+    name: worker
+    platform:
+      aws:
+        zones:
+          - us-east-2a
+          - us-east-2a
+          - us-east-2a
+        rootVolume:
+          iops: 2000
+          size: 500
+          type: io1
+        type: m5.4xlarge
+    replicas: 2
+controlPlane:
+  architecture: amd64
+  hyperthreading: Enabled
+  name: master
+  platform:
+    aws:
+      zones:
+        - us-east-2a
+        - us-east-2a
+        - us-east-2a
+      rootVolume:
+        iops: 4000
+        size: 500
+        type: io1
+      type: m5.4xlarge
+  replicas: 2
+metadata:
+  creationTimestamp: null
+  name: CLUSTERNAME
+networking:
+  clusterNetwork:
+    - cidr: 10.128.0.0/14
+      hostPrefix: 23
+  machineNetwork:
+    - cidr: 10.0.0.0/16
+  networkType: OVNKubernetes
+  serviceNetwork:
+    - 172.30.0.0/16
+platform:
+  aws:
+    region: us-east-2
+publish: External
+pullSecret: '{"auths":{"cloud.openshift.com":{"auth":"b3BlbnNoaWZ0LXJlbGVhc2UtZGV2K29jbV9hY2Nlc3NfODRiYWRjNzEwYmE2NGQ2NWFjZmVkZmZkNjYyOGNjZmQ6U0Q3OEJCVDBHN05NUk9KM1MwS0gwTUY4VDZTVjhZWFlPMldQVjRZOFU5V0ZDODFNU1lLWVJPN1VXVFFQN1RLVg==","email":"rgopinat@redhat.com"},"quay.io":{"auth":"b3BlbnNoaWZ0LXJlbGVhc2UtZGV2K29jbV9hY2Nlc3NfODRiYWRjNzEwYmE2NGQ2NWFjZmVkZmZkNjYyOGNjZmQ6U0Q3OEJCVDBHN05NUk9KM1MwS0gwTUY4VDZTVjhZWFlPMldQVjRZOFU5V0ZDODFNU1lLWVJPN1VXVFFQN1RLVg==","email":"rgopinat@redhat.com"},"registry.connect.redhat.com":{"auth":"fHVoYy1wb29sLWZjOTNlNDc5LTUwNWItNDNlMy05YWVkLWNjYjkxNjI2ZTQ0MzpleUpoYkdjaU9pSlNVelV4TWlKOS5leUp6ZFdJaU9pSTBObUV4WVRBMk5UVmlZVE0wWVRRNFlXRTFOakU1T1RRd1l6YzRNV0ZpT1NKOS5aUE5ZVlM0QW9lVnhoamg5YmVubTBYMThzZDRXVW00eFhHRDVBOEYzamx2c1ljWGgwYzFsbFZNZGJnOENVS2IxUmJHeGJYLWVla3RDWXZDUWxFSE56NExhcXd4WS1IVDlWWGlxeGhaQ3hlbGRwVTJPYTBRM1NwdlFmNVNnLTJYcldSbzI5RGgwZnBzQ09NRTFTTU9zSXI3T0FjUHdrVEFSd05QMzRsOG1KaVBYSVJ1RDkzWDROTzRySHlpd2xwTEQ4R0ZRVEJERXJkeHVMZXF2WWxfZHc1Ylh3T1gwUmF5TzBhcWhVSnJqRWRpQTNremhCVFo2cHZ4d0FyOTE3WC1GekZ1Z19aTUxDd19SU2pYNDJXUWNGb2RyUEhFTlBHdU5WOFB4YTU1Y09BcGJWYjI0eVoydFFyMHcwSjhuMTItREt2bTdZd25VVEhXTjdURHVleU43aTV0dC1rR01wTEFnN2RSY0xMY3ZlaHhPVzlVYVh3dm9KNFhVa2xqRlVpOFl5ZlZYYzRNaUVGcDVSREJna090aGNfUU5WYWxIMjRjbDFyaEdCZFFYd2xuZ1VNQkdKM3FWSkM1amtpd2dSSjd3cmlOQkR3V3dkVTdPYmRpWnVIdjFPa2VLSXZlZExEUUNPRTdGbXBXVkJJcDk4LTVVcGstemNNRDBfSGF5aVZIR0VIeEpWLXBvN0hKenpDNmxsUlNLN2FfSWtMMkp4RzYtZzJyUzkyUm1zcV9Ya2hSZGd4b3p2MDE1ejJWbWhTZGl2MlFlc3I1RjVxbXJzOUdRajN5NGotR3BvRnd5R1dGc2tsamxCcXNyTGNjX2tKV0dKV3RKdkRUNWc0dzRmRXNtRTlab0paaVM2TnZELURNNTFsLXVCZ0UyaUI2bGJaYU1NRzlQRk40N1gzZw==","email":"rgopinat@redhat.com"},"registry.redhat.io":{"auth":"fHVoYy1wb29sLWZjOTNlNDc5LTUwNWItNDNlMy05YWVkLWNjYjkxNjI2ZTQ0MzpleUpoYkdjaU9pSlNVelV4TWlKOS5leUp6ZFdJaU9pSTBObUV4WVRBMk5UVmlZVE0wWVRRNFlXRTFOakU1T1RRd1l6YzRNV0ZpT1NKOS5aUE5ZVlM0QW9lVnhoamg5YmVubTBYMThzZDRXVW00eFhHRDVBOEYzamx2c1ljWGgwYzFsbFZNZGJnOENVS2IxUmJHeGJYLWVla3RDWXZDUWxFSE56NExhcXd4WS1IVDlWWGlxeGhaQ3hlbGRwVTJPYTBRM1NwdlFmNVNnLTJYcldSbzI5RGgwZnBzQ09NRTFTTU9zSXI3T0FjUHdrVEFSd05QMzRsOG1KaVBYSVJ1RDkzWDROTzRySHlpd2xwTEQ4R0ZRVEJERXJkeHVMZXF2WWxfZHc1Ylh3T1gwUmF5TzBhcWhVSnJqRWRpQTNremhCVFo2cHZ4d0FyOTE3WC1GekZ1Z19aTUxDd19SU2pYNDJXUWNGb2RyUEhFTlBHdU5WOFB4YTU1Y09BcGJWYjI0eVoydFFyMHcwSjhuMTItREt2bTdZd25VVEhXTjdURHVleU43aTV0dC1rR01wTEFnN2RSY0xMY3ZlaHhPVzlVYVh3dm9KNFhVa2xqRlVpOFl5ZlZYYzRNaUVGcDVSREJna090aGNfUU5WYWxIMjRjbDFyaEdCZFFYd2xuZ1VNQkdKM3FWSkM1amtpd2dSSjd3cmlOQkR3V3dkVTdPYmRpWnVIdjFPa2VLSXZlZExEUUNPRTdGbXBXVkJJcDk4LTVVcGstemNNRDBfSGF5aVZIR0VIeEpWLXBvN0hKenpDNmxsUlNLN2FfSWtMMkp4RzYtZzJyUzkyUm1zcV9Ya2hSZGd4b3p2MDE1ejJWbWhTZGl2MlFlc3I1RjVxbXJzOUdRajN5NGotR3BvRnd5R1dGc2tsamxCcXNyTGNjX2tKV0dKV3RKdkRUNWc0dzRmRXNtRTlab0paaVM2TnZELURNNTFsLXVCZ0UyaUI2bGJaYU1NRzlQRk40N1gzZw==","email":"rgopinat@redhat.com"}}}'
+sshKey: |
+  ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC+gSMH1Vm/mXqAcYd8DNtDARUgdMi2YDya0xO2wUqEm6winGmdYbg78enUm/RjaJ6hxcg4OdIZPK5mLiWW6F6fo61+QxGBYc0ZfsOsBZMSxHGFsmRSWI79uzB6c6+st4RO4fuASSGKAemSqtkIwtzlbq3bPsx++HY97SQyNQNiH3arP8iCWMPhyf0Zp7UsCvCM9wKbrfJwjxiPSUcCIIN9VLHs2cXA8btb9JrEkBwQZNXvigvawjYta7yLxmVLdCbrc/523JvkqaYWQtJUi0zLcv8Ns0SUWJXSudTNVvByjVnPG31T5Xc+4ErLwkHH9repw3rvLdcqpOSXm3yEB8kN+KSr3vFkoObDgd6WNIPHKuJFtDmT0nRKq2Ennc1R6gyaWwRZ+MTB9UdWgvoF0HYcimzEmF9axx+jxFhpJn2hWoIziZGynomifN55GLkfeXEaV0aqBm4LCQMcPAaqCbGd0ZjwiQ58Y/dXQ4zFdtacYrJS86dju+ktg29VU8g56m8= rgopinat@Rams-MacBook-Pro
