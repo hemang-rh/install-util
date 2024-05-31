@@ -1,29 +1,32 @@
-RED='\033[1;31m'
-NC='\033[0m' # No Color
-BLUE='\033[1;36m'
-PURPLE='\033[1;35m'
-ORANGE='\033[0;33m'
+#!/bin/bash
 
-# echo -e "${BLUE}INFO:${NC}
-# echo -e "${RED}ERROR:${NC}
-# echo -e "${ORANGE}WARNING:${NC}
-
-logbanner() {
-    echo -e "${PURPLE}====${NC} ${1} ${PURPLE}================================"
+retry(){
+    echo "Running:" "${@}"
+    echo "Retry times: 12"
+    echo "Delay: 20 sec"
+    local n=1
+    local max=12
+    local delay=20
+    # until "${@}" 1>&2
+    until "${@}"
+    do
+        if [[ $n -lt $max ]]; then
+            ((n++))
+            echo "Retry after $delay sec"
+            sleep $delay
+        else
+            echo "Failed after $n attempts."
+            return 1
+        fi
+    done
+    echo "[OK]"
 }
 
-loginfo() {
-    echo -e "${BLUE}INFO:${NC} ${1}"
-}
+apply_kustomize(){
+    if [ ! -f "$1/kustomization.yaml" ]; then
+        echo "'kustomization.yaml' not found in $1"
+        return 1
+    fi
 
-logerror () {
-    echo -e "${RED}ERROR:${NC} ${1}"
-}
-
-logwarning () {
-    echo -e "${ORANGE}WARNING:${NC} ${1}"
-}
-
-log() {
-    echo "$1"
+    retry oc apply -k "$1" 2>/dev/null
 }

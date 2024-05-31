@@ -2,6 +2,7 @@
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 PARENT_DIR="${SCRIPT_DIR%/*}"
+source ${PARENT_DIR}/common/logging.sh
 source ${PARENT_DIR}/common/util.sh
 
 help() {
@@ -9,7 +10,7 @@ help() {
     loginfo "Usage: $(basename $0) [-h] [-c CLUSTERNAME]"
     loginfo "Options:"
     loginfo " -h, --help            Show usage"
-    loginfo " -c, --clustername     Cluster name to destroy"
+    loginfo " -c, --clustername     Cluster name to destroy (required)"
     exit 0
 }
 
@@ -23,6 +24,15 @@ done
 
 logbanner "Begin OpenShift Destroy Cluster"
 
+verify_aws_secrets() {
+    loginfo "Verify AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY exists"
+    if ! ([ -n "$AWS_ACCESS_KEY_ID" ] || grep -q '^export AWS_ACCESS_KEY_ID=' env.config 2>/dev/null) && 
+         ([ -n "$AWS_SECRET_ACCESS_KEY" ] || grep -q '^export AWS_SECRET_ACCESS_KEY=' env.config 2>/dev/null); then
+        logerror "Please export AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY for destroying cluster on AWS">&2;
+        exit 1
+    fi
+}
+
 destroy_cluster(){
     if [ -z "$CLUSTERNAME" ]; then
         logerror "Please provide a cluster name"
@@ -34,6 +44,10 @@ destroy_cluster(){
         exit 1
     fi
 
+    if [ -f $SCRIPT_DIR/.env ]; then source $SCRIPT_DIR/.env; fi
+    verify_aws_secrets
+    loginfo "AWS_ACCESS_KEY_ID: '$AWS_ACCESS_KEY_ID'"
+    loginfo "AWS_SECRET_ACCESS_KEY: '$AWS_SECRET_ACCESS_KEY'"
     loginfo "Destroy cluster '$CLUSTERNAME'"
     openshift-install destroy cluster --dir=$CLUSTERNAME --log-level=info
 }
