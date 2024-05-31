@@ -23,3 +23,7 @@ logerror () {
 logwarning () {
     echo -e "${ORANGE}WARNING:${NC} ${1}"
 }
+
+log() {
+    echo "$1"
+}

@@ -4,6 +4,21 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 PARENT_DIR="${SCRIPT_DIR%/*}"
 source ${PARENT_DIR}/common/util.sh
 
+help() {
+    loginfo "This script installs RHOAI and other dependencies"
+    loginfo "Usage: $(basename $0)"
+    loginfo "Options:"
+    loginfo " -h, --help            Show usage"
+    exit 0
+}
+
+while getopts ":h" opt; do
+  case $opt in
+    h) help ;;
+    \?) echo "Invalid option: -$OPTARG" >&1; exit 1 ;;
+  esac
+done
+
 echo "-------- Running 01_create_cluster_admin.sh ----------------"
 source "$SCRIPT_DIR/01_create_cluster_admin.sh" user1 redhat1
 sleep 15
