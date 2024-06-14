@@ -1,0 +1,29 @@
+# https://docs.openshift.com/container-platform/4.11/machine_management/applying-autoscaling.html
+apiVersion: autoscaling.openshift.io/v1
+kind: ClusterAutoscaler
+metadata:
+  name: default
+spec:
+  podPriorityThreshold: -10
+  resourceLimits:
+    maxNodesTotal: 10
+    cores:
+      min: 0
+      # 16 cores * 7 nodes = 112
+      max: 112
+    memory:
+      min: 0
+      # 32 GB * 3 = 96
+      # 64 GB * 4 = 256
+      max: 352
+    gpus:
+      - type: nvidia.com/gpu
+        min: 0
+        max: 1
+  scaleDown:
+    enabled: true
+    delayAfterAdd: 5m
+    delayAfterDelete: 1m
+    delayAfterFailure: 30s
+    unneededTime: 5m
+    utilizationThreshold: "0.7"
