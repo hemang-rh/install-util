@@ -12,17 +12,17 @@ log "Log file: '$LOG_FILE'"
 
 set_servicemesh_unmanaged() {
     loginfo "Set servicemesh unmanaged"
-    # TODO 
+    loginfo "TODO"
 }
 
 set_kserve_managed() {
     loginfo "Set kserve managed"
-    # TODO
+    loginfo "TODO"
 }
 
 set__serving_kserve_unmanaged() {
     loginfo "Set servicemesh unmanaged"
-    # TODO
+    loginfo "TODO"
 }
 
 logbanner "End installing kserve"

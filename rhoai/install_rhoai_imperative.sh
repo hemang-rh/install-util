@@ -24,9 +24,12 @@ USER="admin1"
 PASSWORD="openshift1"
 WAIT_TIME=10
 
-LOG_FILE="install_$(date +"%Y%m%d:%H%M").log"
+LOG_FILE="rhoai_install_imperative_$(date +"%Y%m%d:%H%M").log"
 echo "Log file: $LOG_FILE"
 touch $LOG_FILE
+
+loginfo "Setup RHOAI Console Banner Text"
+apply_kustomize $SCRIPT_DIR/demos/rhoai-only
 
 loginfo "-------- Running 00_add_admin_user.sh ----------------"
 source "$SCRIPT_DIR/00_add_admin_user.sh" $USER $PASSWORD $LOG_FILE
@@ -70,4 +73,3 @@ sleep $WAIT_TIME
 
 loginfo "-------- Running 03_8_configure_authorization_kserve ----------------"
 source "$SCRIPT_DIR/03_8_configure_authorization_kserve.sh" $LOG_FILE
-

@@ -117,6 +117,8 @@ verify_wildcard_certificate
 set_certificate_environment_variables
 create_tls_secret
 create_gateways
+loginfo "Wait for 90 seconds"
+sleep 90
 verify_gateways
 
 loginfo "End creating secure gateways for knative serving"

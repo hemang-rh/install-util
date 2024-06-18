@@ -30,6 +30,11 @@ create_instance(){
     oc create -f $SCRIPT_DIR/operators/rh-authorino/authorino-instance.yaml 2>&1 | tee -a $LOG_FILE
 }
 
+verify_installation() {
+    loginfo "Verify authorino-operator installation"
+    retry_new "oc get csv -n openshift-operators" "authorino-operator" "Succeeded" 
+}
+
 patch_deployment(){
     loginfo "Patch authorino deployment"
     oc patch deployment authorino -n redhat-ods-applications-auth-provider -p '{"spec": {"template":{"metadata":{"labels":{"sidecar.istio.io/inject":"true"}}}} }' 2>&1 | tee -a $LOG_FILE
@@ -47,6 +52,7 @@ verify_authorino_instance(){
 create_authorino_subscription
 create_servicemesh_member
 create_instance
+verify_installation
 patch_deployment
 
 logbanner "End installing authorization provider"

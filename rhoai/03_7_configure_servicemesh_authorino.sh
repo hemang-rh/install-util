@@ -10,5 +10,6 @@ LOG_FILE=$1
 logbanner "Begin configuring service mesh to use authorino"
 log "Log file: '$LOG_FILE'"
 
-# TODO
+loginfo "TODO"
+
 logbanner "End configuring service mesh to use authorino"

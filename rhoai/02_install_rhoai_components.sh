@@ -16,5 +16,7 @@ create_datascience_cluster(){
 }
 
 create_datascience_cluster
+loginfo "Wait for 120 seconds"
+sleep 120
 
 logbanner "End installing rhoai component"

@@ -20,6 +20,11 @@ create_subscription(){
     oc create -f $SCRIPT_DIR/operators/rh-servicemesh/servicemesh-subscription.yaml 2>&1 | tee -a $LOG_FILE
 }
 
+verify_installation() {
+    loginfo "Verify servicemeshoperator installation"
+    retry_new "oc get csv -n openshift-operators" "servicemeshoperator" "Succeeded" 
+}
+
 create_control_plane(){
     loginfo "Create control plane"
     oc create -f $SCRIPT_DIR/operators/rh-servicemesh/smcp.yaml 2>&1 | tee -a $LOG_FILE
@@ -38,9 +43,10 @@ verify_pods(){
 
 create_istio_namespace
 create_subscription
+verify_installation
 create_control_plane
-loginfo "Wait for 90 seconds for pods to be created"
-sleep 90
+loginfo "Wait for 180 seconds for control plane to be created"
+sleep 180
 verify_pods
 
 logbanner "End installing servicemesh"

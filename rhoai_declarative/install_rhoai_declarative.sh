@@ -26,6 +26,10 @@ while getopts ":hc:b:r:g:" opt; do
   esac
 done
 
+LOG_FILE="rhoai_install_declarative_$(date +"%Y%m%d:%H%M").log"
+echo "Log file: $LOG_FILE"
+touch $LOG_FILE
+
 logbanner "Install RedHat OpenShift AI"
 
 setup() {

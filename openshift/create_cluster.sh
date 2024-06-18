@@ -37,6 +37,20 @@ while getopts ":hc:b:r:g:" opt; do
   esac
 done
 
+if test -d "$TMPDIR"; then
+    :
+elif test -d "$TMP"; then
+    TMPDIR=$TMP
+elif test -d "/var/tmp"; then
+    TMPDIR=/var/tmp
+else
+    TMPDIR=/tmp
+fi
+
+LOG_FILE="create_cluster_$(date +"%Y%m%d:%H%M").log"
+echo "Log file: $LOG_FILE"
+touch $LOG_FILE
+
 logbanner "Begin OpenShift Cluster Installation"
 
 verify_pull_secret(){
@@ -58,7 +72,7 @@ verify_aws_secrets() {
 
 create_ssh_key() {
     loginfo "Create SSH key for $CLUSTERNAME"
-    ssh-keygen -t ed25519 -b 512 -f $CLUSTERNAME/id_ed25519 -C admin@$CLUSTERNAME.$BASEDOMAIN -N ''
+    ssh-keygen -t ed25519 -b 512 -f $CLUSTERDIR/id_ed25519 -C admin@$CLUSTERNAME.$BASEDOMAIN -N '' 2>&1 | tee -a $LOG_FILE
 }
 
 setup() {
@@ -79,8 +93,11 @@ setup() {
 
     if [ $GPU = "true" ]; then
         WORKERINSTANCETYPE=$GPUINSTANCETYPE
-    else
+    elif [ $GPU = "false" ]; then
         WORKERINSTANCETYPE=$CPUINSTANCETYPE
+    else
+        logerror "Invalid GPU type. Accepted values are 'true' or 'false')"
+        exit 1
     fi
 
     if [ $REGION = "west" ]; then
@@ -94,9 +111,10 @@ setup() {
         ZONE3="us-east-2c"
         REGION="us-east-2"
     else
-        logerror "Invalid region. Set region (east/west)"
+        logerror "Invalid region. Accepted values are 'east' or 'west')"
         exit 1
     fi
+
 
     loginfo "Cluster Name = $CLUSTERNAME"
     loginfo "Base Domain = $BASEDOMAIN"
@@ -107,13 +125,16 @@ setup() {
 
     INSTALLFILE=$SCRIPT_DIR/config/install-config.yaml
     loginfo "Insall file path: $INSTALLFILE"
+
     loginfo "Create a directory to store assets for cluster '$CLUSTERNAME'"
-    mkdir $CLUSTERNAME
+    mkdir -p $TMPDIR/clusters/$CLUSTERNAME
+    CLUSTERDIR=$TMPDIR/clusters/$CLUSTERNAME
+    loginfo "Cluster directory: '$CLUSTERDIR'"
 
     create_ssh_key
 
-    if [ -f "$CLUSTERNAME/install-config.yaml" ]; then
-        rm -f "$CLUSTERNAME/install-config.yaml"
+    if [ -f "$CLUSTERDIR/install-config.yaml" ]; then
+        rm -f "$CLUSTERDIR/install-config.yaml"
     fi
 
     sed "s%CLUSTERNAME%$CLUSTERNAME%; 
@@ -123,24 +144,24 @@ setup() {
     s%ZONE1%$ZONE1%; 
     s%ZONE2%$ZONE2%; 
     s%ZONE3%$ZONE3%; 
-    s%REGION%$REGION%" $INSTALLFILE >> $CLUSTERNAME/install-config.yaml
+    s%REGION%$REGION%" $INSTALLFILE >> $CLUSTERDIR/install-config.yaml
 
     if [ -f $SCRIPT_DIR/.env ]; then source $SCRIPT_DIR/.env; fi
-    echo "pullSecret: '$PULLSECRET'" >> $CLUSTERNAME/install-config.yaml
-    echo "sshKey: '$(cat $CLUSTERNAME/id_ed25519.pub)'" >> $CLUSTERNAME/install-config.yaml
+    echo "pullSecret: '$PULLSECRET'" >> $CLUSTERDIR/install-config.yaml
+    echo "sshKey: '$(cat $CLUSTERDIR/id_ed25519.pub)'" >> $CLUSTERDIR/install-config.yaml
 
 }
 
 copy_install_config() {
     loginfo "Copying install-config.yaml to install-config.yaml.bak"
-    cp $CLUSTERNAME/install-config.yaml $CLUSTERNAME/install-config.yaml.bak
+    cp $CLUSTERDIR/install-config.yaml $CLUSTERDIR/install-config.yaml.bak
 }
 
 install_cluster() {
     loginfo "Installing OpenShift Cluster"
     loginfo "AWS_ACCESS_KEY_ID = $AWS_ACCESS_KEY_ID"
     loginfo "AWS_SECRET_ACCESS_KEY = $AWS_SECRET_ACCESS_KEY"
-    openshift-install create cluster --dir=$CLUSTERNAME --log-level=info
+    openshift-install create cluster --dir=$CLUSTERDIR --log-level=info 2>&1 | tee -a $LOG_FILE
 }
 
 setup

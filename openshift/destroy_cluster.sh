@@ -22,6 +22,16 @@ while getopts ":hc:" opt; do
   esac
 done
 
+if test -d "$TMPDIR"; then
+    :
+elif test -d "$TMP"; then
+    TMPDIR=$TMP
+elif test -d "/var/tmp"; then
+    TMPDIR=/var/tmp
+else
+    TMPDIR=/tmp
+fi
+
 logbanner "Begin OpenShift Destroy Cluster"
 
 verify_aws_secrets() {
@@ -44,17 +54,20 @@ destroy_cluster(){
         exit 1
     fi
 
+    CLUSTERDIR=$TMPDIR/clusters/$CLUSTERNAME
+    loginfo "Cluster directory: $CLUSTERDIR"
+
     if [ -f $SCRIPT_DIR/.env ]; then source $SCRIPT_DIR/.env; fi
     verify_aws_secrets
     loginfo "AWS_ACCESS_KEY_ID: '$AWS_ACCESS_KEY_ID'"
     loginfo "AWS_SECRET_ACCESS_KEY: '$AWS_SECRET_ACCESS_KEY'"
     loginfo "Destroy cluster '$CLUSTERNAME'"
-    openshift-install destroy cluster --dir=$CLUSTERNAME --log-level=info
+    openshift-install destroy cluster --dir=$CLUSTERDIR --log-level=info
 }
 
 destroy_cluster
 loginfo "Wait for 60 seconds for resources to be deleted"
 sleep 60
-rm -rfd "$CLUSTERNAME"
+rm -rfd "$CLUSTERDIR"
 
 logbanner "End OpenShift Destroy Cluster"

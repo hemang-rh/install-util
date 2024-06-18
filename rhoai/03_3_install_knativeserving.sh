@@ -28,6 +28,7 @@ create_knativeserving(){
 review_servicemeshmemberroll() {
     loginfo "Review service mesh member roll"
     oc describe smmr default -n istio-system 2>&1 | tee -a $LOG_FILE
+    oc get smmr default -n istio-system -o jsonpath='{.status.memberStatuses}' 2>&1 | tee -a $LOG_FILE
 }
 
 verify_pods(){
@@ -38,6 +39,8 @@ verify_pods(){
 create_namespace
 create_servicemesh_member
 create_knativeserving
+loginfo "Wait for 180 seconds"
+sleep 180
 review_servicemeshmemberroll
 loginfo "Wait for 90 seconds for pods to be created"
 sleep 90

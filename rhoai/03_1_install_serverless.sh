@@ -15,12 +15,18 @@ create_subscription(){
     oc create -f $SCRIPT_DIR/operators/rh-serverless/serverless-subscription.yaml 2>&1 | tee -a $LOG_FILE
 }
 
+verify_installation() {
+    loginfo "Verify serverless-operator installation"
+    retry_new "oc get csv -n openshift-operators" "serverless-operator" "Succeeded" 
+}
+
 verify_csv(){
     loginfo "Verify cluster service version"
     oc get csv 2>&1 | tee -a $LOG_FILE
 }
 
 create_subscription
+verify_installation
 verify_csv
 
 logbanner "End installing serverless"

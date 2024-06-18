@@ -10,5 +10,6 @@ LOG_FILE=$1
 logbanner "Begin configuring authorization for kserve"
 log "Log file: '$LOG_FILE'"
 
-# TODO
+loginfo "TODO"
+
 logbanner "End configuring authorization for kserve"

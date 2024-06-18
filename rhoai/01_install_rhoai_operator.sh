@@ -6,6 +6,7 @@ source ${PARENT_DIR}/common/logging.sh
 source ${PARENT_DIR}/common/util.sh
 
 LOG_FILE=$1
+SUCCESS=true
 
 logbanner "Begin installing rhoai operator"
 log "Log file: '$LOG_FILE'"
@@ -26,16 +27,11 @@ create_subscription() {
 }
 
 verify_installation() {
-    loginfo "Verify installation"
-    # Operator
-    if oc get operators | grep rhods-operator.redhat-ods.operator; then
-        loginfo "rhods-operator.redhat-ods.operator installed"
-    else
-        logerror "rhods-operator.redhat-ods.operator not installed"
-    fi
-    loginfo "Wait for 120 seconds for projects to be created"
-    sleep 120
-    
+    loginfo "Verify rhods-operator installation"
+    retry_new "oc get csv -n openshift-operators" "rhods-operator" "Succeeded" 
+}
+
+verify_projects() {
     # Projects
     oc get projects | grep -i redhat-ods
     if [ $(oc get projects | grep -i redhat-ods | wc -l) -eq 3 ]
@@ -50,5 +46,6 @@ create_namespace
 create_operator_group
 create_subscription
 verify_installation
+verify_projects
 
 logbanner "End installing rhoai operator"
