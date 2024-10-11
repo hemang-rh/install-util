@@ -1,0 +1,8 @@
+site_name: Demo
+theme: material
+markdown_extensions:
+  - pymdownx.arithmatex
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.superfences

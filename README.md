@@ -10,7 +10,11 @@ This repo contains automation for below:
 Testing out something
 ```
 
-```{ .text .no-copy }
+```{.r code-copy=false}
 Hello with no copy
 ...
 ```
+
+> ```
+>   a fenced block
+> ```
